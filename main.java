@@ -4,15 +4,23 @@ import java.util.*;
 
 public  class main {
     public static void main(String args[]){
-        User user1=new User("user");
-        System.out.println(user1.getName());
-        System.out.println(Status.OPEN);
-
+        User user1=new User("venky");
+        User user2=new User("rocky");
+        Task task1=user1.createTask(TaskType.ARCHITECTURE);
+        Task atsk2=user1.createTask(TaskType.MEETING);
+        Sprint spObj=user1.createSprint(10,20);
+        spObj.addTask(task1);
+        task1.setTaskStatus(Status.IN_PROGRESS);
+        spObj.printDetails();
+        user1.printTasks();
     }
 }
 
 enum Status {
     OPEN, IN_PROGRESS, CLOSED
+}
+enum TaskType{
+    BUG,NEW_FEATURE,ARCHITECTURE,DATABASE_INTEGRATION,MEETING
 }
 class User{
     private int ID;
@@ -23,6 +31,8 @@ class User{
     User(String name){
         this.ID=this.IdCounter++;
         this.name=name;
+        this.tasks=new ArrayList<>();
+        this.sprints=new ArrayList<>();
     }
     public String getName(){
         return this.name;
@@ -59,11 +69,12 @@ class User{
             }
         }
     }
-    public void createSprint(int start, int end){
+    public Sprint createSprint(int start, int end){
         Sprint sprintObj=new Sprint(start, end,"food delivery api coding sprint");
         this.sprints.add(sprintObj);
+        return sprintObj;
     }
-    public void createTask(int sprintId){
+    public Task createTask(int sprintId){
         Task taskObj=new Task("database integration","Creating a sql database and then integrate into development environment");
         for(Sprint sp:this.sprints){
             if(sp.getId()==sprintId){
@@ -72,10 +83,16 @@ class User{
                 break;
             }
         }
+        return taskObj;
     }
     public void createTask(){
         Task taskObj=new Task("database integration","Creating a sql database and then integrate into development environment");
         this.tasks.add(taskObj);
+    }
+    public Task createTask(Enum taskType){
+        Task taskObj=new Task(taskType);
+        this.tasks.add(taskObj);
+        return taskObj;
     }
 
 }
@@ -156,6 +173,10 @@ class Task{
         this.id=IdCounter++;
         this.title=title;
         this.description=description;
+    }
+    Task(Enum taskType){
+        this.id=IdCounter++;
+        this.type=taskType;
     }
     public int getId(){
         return this.id;
